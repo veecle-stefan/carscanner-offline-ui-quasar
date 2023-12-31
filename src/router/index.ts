@@ -1,3 +1,4 @@
+import { useTripStore } from 'stores/triprecord';
 import { route } from 'quasar/wrappers';
 import {
   createMemoryHistory,
@@ -17,10 +18,12 @@ import routes from './routes';
  * with the Router instance.
  */
 
-export default route(function (/* { store, ssrContext } */) {
+export default route(function () {
   const createHistory = process.env.SERVER
     ? createMemoryHistory
-    : (process.env.VUE_ROUTER_MODE === 'history' ? createWebHistory : createWebHashHistory);
+    : process.env.VUE_ROUTER_MODE === 'history'
+      ? createWebHistory
+      : createWebHashHistory;
 
   const Router = createRouter({
     scrollBehavior: () => ({ left: 0, top: 0 }),
@@ -30,6 +33,14 @@ export default route(function (/* { store, ssrContext } */) {
     // quasar.conf.js -> build -> vueRouterMode
     // quasar.conf.js -> build -> publicPath
     history: createHistory(process.env.VUE_ROUTER_BASE),
+  });
+
+  Router.beforeEach((to) => {
+    const tripStore = useTripStore();
+    if (to.meta.needsRecording && !tripStore.isLoaded && to.name !== 'import') {
+      // redirect the user to the import-file page
+      return { name: 'import' };
+    }
   });
 
   return Router;
