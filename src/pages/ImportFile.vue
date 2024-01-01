@@ -22,9 +22,30 @@
       <q-separator dark />
 
       <q-card-actions>
-        <q-btn color="primary" icon="file_download" @click="importFile"
-          >Import file</q-btn
+        <q-file
+          v-model="selectedFile"
+          color="primary"
+          counter
+          label="Pick files"
+          standout
+          bottom-slots
+          style="width: 300px"
+          accept=".csv, text/csv"
+          @rejected="onRejected"
+          @update:model-value="handleUpload()"
         >
+          <template v-slot:prepend>
+            <q-icon name="attach_file" />
+          </template>
+          <template v-if="selectedFile" v-slot:append>
+            <q-icon
+              name="cancel"
+              @click.stop.prevent="unloadFile"
+              class="cursor-pointer"
+            />
+          </template>
+          <template v-slot:hint> No file selected yet </template>
+        </q-file>
       </q-card-actions>
     </q-card>
   </q-page>
@@ -33,11 +54,35 @@
 <script setup lang="ts">
 import { useTripStore } from 'stores/triprecord';
 import { useRouter } from 'vue-router';
+import { useQuasar } from 'quasar';
+import { ref } from 'vue';
 const tripStore = useTripStore();
 const router = useRouter();
+const $q = useQuasar();
 
-function importFile() {
-  tripStore.loadTrip('blabla');
-  router.push({ name: 'analysis' });
+const selectedFile = ref(null);
+
+function unloadFile() {
+  $q.notify({
+    type: 'information',
+    message: 'File removed.',
+  });
+  selectedFile.value = null;
+}
+
+function handleUpload() {
+  if (selectedFile.value) {
+    tripStore.loadTrip(selectedFile.value);
+    router.push({ name: 'analysis' });
+  } else {
+    console.log('No file selected');
+  }
+}
+
+function onRejected() {
+  $q.notify({
+    type: 'negative',
+    message: "Selected file doesn't seem to be a CSV file.",
+  });
 }
 </script>

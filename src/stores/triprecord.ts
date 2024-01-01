@@ -1,26 +1,30 @@
 import { defineStore } from 'pinia';
+import { RecordedDrive } from 'src/drivelog';
+
+interface State {
+  loadedDrive: RecordedDrive | null;
+}
 
 export const useTripStore = defineStore('trip', {
-  state: () => ({
-    tripLoaded: false,
-    loadedFrom: '',
-  }),
+  state: (): State => {
+    return {
+      loadedDrive: null,
+    };
+  },
 
   getters: {
     isLoaded(state) {
-      return state.tripLoaded;
+      return state.loadedDrive != null;
     },
   },
 
   actions: {
-    loadTrip(fileName: string) {
-      this.loadedFrom = fileName;
-      this.tripLoaded = true;
+    loadTrip(newCSV: File) {
+      this.loadedDrive = new RecordedDrive(newCSV);
     },
 
     unload() {
-      this.loadedFrom = '';
-      this.tripLoaded = false;
+      this.loadedDrive = null;
     },
   },
 });
