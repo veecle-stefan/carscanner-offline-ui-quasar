@@ -55,12 +55,23 @@
 import { useTripStore } from 'stores/triprecord';
 import { useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 const tripStore = useTripStore();
 const router = useRouter();
 const $q = useQuasar();
 
 const selectedFile = ref(null);
+
+function dispError(msg: string) {
+  $q.notify({
+    type: 'error',
+    message: msg,
+  });
+}
+
+onMounted(() => {
+  tripStore.driveInterface.onError = dispError;
+});
 
 function unloadFile() {
   $q.notify({

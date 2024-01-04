@@ -1,30 +1,39 @@
 import { defineStore } from 'pinia';
-import { RecordedDrive } from 'src/drivelog';
+import { DriveLogInterface } from 'src/drivelog/DriveLogInterface';
+import { reactive } from 'vue';
 
 interface State {
-  loadedDrive: RecordedDrive | null;
+  loadedDrive: DriveLogInterface;
 }
 
 export const useTripStore = defineStore('trip', {
   state: (): State => {
     return {
-      loadedDrive: null,
+      loadedDrive: reactive(new DriveLogInterface()),
     };
   },
 
   getters: {
     isLoaded(state) {
-      return state.loadedDrive != null;
+      return state.loadedDrive.isFileLoaded();
+    },
+
+    driveInterface(state) {
+      return state.loadedDrive;
+    },
+
+    headers(state) {
+      return state.loadedDrive.headers;
     },
   },
 
   actions: {
     loadTrip(newCSV: File) {
-      this.loadedDrive = new RecordedDrive(newCSV);
+      this.loadedDrive.appendCSVFile(newCSV);
     },
 
     unload() {
-      this.loadedDrive = null;
+      this.loadedDrive.unloadAllFiles();
     },
   },
 });
