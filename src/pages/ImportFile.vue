@@ -52,7 +52,7 @@
 </template>
 
 <script setup lang="ts">
-import { useTripStore } from 'stores/triprecord';
+import { useTripStore } from 'stores/tripinterface';
 import { useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
 import { ref, onMounted } from 'vue';
@@ -70,7 +70,7 @@ function dispError(msg: string) {
 }
 
 onMounted(() => {
-  tripStore.driveInterface.onError = dispError;
+  tripStore.loadedDrive.onError = dispError;
 });
 
 function unloadFile() {
@@ -83,7 +83,7 @@ function unloadFile() {
 
 function handleUpload() {
   if (selectedFile.value) {
-    tripStore.loadTrip(selectedFile.value);
+    tripStore.loadedDrive.appendCSVFile(selectedFile.value);
     router.push({ name: 'analysis' });
   } else {
     console.log('No file selected');

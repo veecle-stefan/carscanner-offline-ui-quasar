@@ -6,12 +6,16 @@ import {
 } from './DataWorker';
 
 export class DriveLogInterface {
-  worker: Worker;
+  worker: Worker | undefined;
   tripLoaded = false;
   onError: ((msg: string) => void) | null = null;
-  headers: string[] = ['foobar'];
+  headers: string[] = [];
 
   constructor() {
+    console.log('DriveLogInterface created');
+  }
+
+  startBGThread() {
     // start the background worker thread
     this.worker = new Worker(new URL('./DataWorker.ts', import.meta.url), {
       type: 'module',
@@ -33,7 +37,8 @@ export class DriveLogInterface {
 
       case WorkerReply.ProvideHeaders:
         if (reply.payloadArray) {
-          this.headers = reply.payloadArray;
+          console.log('Headers have been updated');
+          this.headers.splice(0, this.headers.length, ...reply.payloadArray); // delete everything and add only new items
         }
         break;
     }
@@ -41,11 +46,11 @@ export class DriveLogInterface {
 
   sendCommand(cmd: WorkerCommand, data?: string, file?: File) {
     const packaet: WorkerMessage = { cmd, data, file };
-    this.worker.postMessage(packaet);
+    this.worker?.postMessage(packaet);
   }
 
-  isFileLoaded(): boolean {
-    return this.tripLoaded;
+  hasHeaders(): boolean {
+    return this.headers.length > 0;
   }
 
   appendCSVFile(csvFile: File) {

@@ -1,4 +1,4 @@
-import { useTripStore } from 'stores/triprecord';
+import { useTripStore } from 'stores/tripinterface';
 import { route } from 'quasar/wrappers';
 import {
   createMemoryHistory,
@@ -34,10 +34,13 @@ export default route(function () {
     // quasar.conf.js -> build -> publicPath
     history: createHistory(process.env.VUE_ROUTER_BASE),
   });
-
+  const tripStore = useTripStore();
   Router.beforeEach((to) => {
-    const tripStore = useTripStore();
-    if (to.meta.needsRecording && !tripStore.isLoaded && to.name !== 'import') {
+    if (
+      to.meta.needsRecording &&
+      !tripStore.loadedDrive.tripLoaded &&
+      to.name !== 'import'
+    ) {
       // redirect the user to the import-file page
       return { name: 'import' };
     }

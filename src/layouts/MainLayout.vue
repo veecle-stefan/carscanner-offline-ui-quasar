@@ -42,7 +42,7 @@
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import EssentialLink from 'components/EssentialLink.vue';
-import { useTripStore } from 'stores/triprecord';
+import { useTripStore } from 'stores/tripinterface';
 const tripStore = useTripStore();
 const router = useRouter();
 const leftDrawerOpen = ref(false);
@@ -57,7 +57,9 @@ const linksList = computed(() => {
         title: route.meta.title,
         icon: route.meta.icon,
         disabled:
-          route.meta.needsRecording === true ? !tripStore.isLoaded : false,
+          route.meta.needsRecording === true
+            ? !tripStore.loadedDrive.tripLoaded
+            : false,
       };
     })
     .filter((item) => item.link); // Filter out unnamed routes

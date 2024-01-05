@@ -6,7 +6,7 @@
           <q-toolbar-title>Data Columns</q-toolbar-title>
         </q-toolbar>
         <q-scroll-area visible style="height: 600px" class="col-4">
-          <q-list bordered v-if="!headersAvailable">
+          <q-list bordered v-if="!loadedDrive.tripLoaded">
             <q-item v-for="n in 9" v-bind:key="n">
               <q-item-section avatar top>
                 <q-skeleton type="QAvatar"></q-skeleton>
@@ -21,7 +21,7 @@
               clickable
               v-ripple
               v-for="header in allHeaders"
-              v-bind:key="header.index"
+              v-bind:key="header.idx"
             >
               <q-item-section avatar top>
                 <q-avatar icon="folder" color="primary" text-color="white" />
@@ -50,21 +50,23 @@
 </template>
 
 <script setup lang="ts">
-import { useTripStore } from 'src/stores/triprecord';
-import { computed, ref } from 'vue';
+import { useTripStore } from 'src/stores/tripinterface';
+import { computed, ref, watch } from 'vue';
+import { storeToRefs } from 'pinia';
 
 const model = ref(null);
 const options = ['test', 'bla'];
 
 const tripStore = useTripStore();
+const { loadedDrive } = storeToRefs(tripStore);
 
-const headersAvailable = computed(() => {
-  return tripStore.isLoaded && tripStore.headers;
+const isFileLoaded = computed(() => {
+  return loadedDrive.value.tripLoaded;
 });
 
 const allHeaders = computed(() => {
-  if (tripStore.isLoaded && tripStore.headers) {
-    return tripStore.headers.map((header, index) => ({
+  if (loadedDrive.value.tripLoaded && loadedDrive.value.headers.length > 0) {
+    return loadedDrive.value.headers.map((header, index) => ({
       name: header,
       idx: index,
     }));
