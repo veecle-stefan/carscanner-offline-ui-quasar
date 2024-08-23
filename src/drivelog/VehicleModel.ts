@@ -1,16 +1,15 @@
-import { HeaderMapping, VehicleRecords } from './VehicleRecords';
+import { DataEntry, VehicleRecords } from './VehicleRecords';
 
 export class VehicleModel {
   records: VehicleRecords;
   driveTimeS = 0;
-  WattHours = 0;
+  energyUsed = 0;
   consumption = 0;
   totalDistanceM = 0;
   averageSpeed = 0;
 
   constructor(records: VehicleRecords) {
     this.records = records;
-    this.compute();
   }
 
   calculateDistance(
@@ -80,11 +79,11 @@ export class VehicleModel {
         }
 
         this.driveTimeS = Math.trunc(driveTime);
-        this.WattHours = Math.trunc(WattSeconds / 3600);
-        this.consumption = this.WattHours / (this.totalDistanceM / 1000);
+        this.energyUsed = Math.trunc(WattSeconds / 3600);
+        this.consumption = this.energyUsed / (this.totalDistanceM / 1000);
         this.averageSpeed = (this.totalDistanceM / 1000) / (driveTime / 3600);
 
-        console.log(`Computed actual coulomb count: ${this.WattHours} Wh`);
+        console.log(`Computed actual coulomb count: ${this.energyUsed} Wh`);
         console.log(`Computed actual drive time: ${Math.trunc(driveTime/3600)}h:${Math.trunc(driveTime / 60) % 60}m `);
         console.log(`Total distance travelled: ${this.totalDistanceM / 1000} km`);
         console.log(`Consumption: ${this.consumption} Wh/km`);

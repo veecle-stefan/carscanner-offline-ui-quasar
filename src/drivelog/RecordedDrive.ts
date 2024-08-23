@@ -1,4 +1,4 @@
-import { HeaderMapping, VehicleRecords } from './VehicleRecords';
+import { DataEntry, VehicleRecords } from './VehicleRecords';
 import { Option, Some, None, Result, Err, Ok } from 'ts-results';
 
 export class RecordedDrive {
@@ -52,7 +52,7 @@ export class RecordedDrive {
 
   parseFile(csv: string): Result<VehicleRecords, string> {
     const headerNames: string[] = [];
-    const lastHeader: HeaderMapping = {};
+    const lastHeader: DataEntry = {};
     const allTextLines = csv.split(/\r\n|\n/);
 
     // data must have at least 1 useful line

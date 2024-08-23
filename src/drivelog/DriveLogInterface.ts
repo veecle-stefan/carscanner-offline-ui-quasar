@@ -1,3 +1,4 @@
+import * as Units from './Units';
 import {
   WorkerCommand,
   WorkerMessage,
@@ -10,9 +11,57 @@ export class DriveLogInterface {
   tripLoaded = false;
   onError: ((msg: string) => void) | null = null;
   headers: string[] = [];
+  headerMappings: Units.HeaderMeaningList = {
+    HVBatterySOC: {
+      label: 'Battery State of Charge',
+      matchHeaderWords: 'SOC State of Charge',
+      unit: [Units.Percent],
+    },
+    HVBatteryCapacity: {
+      label: 'Battery Capacity',
+      matchHeaderWords: 'Battery capacity',
+      unit: [Units.WattHours],
+    },
+    HVBatteryTemp: {
+      label: 'Battery Temperature',
+      matchHeaderWords: 'Battery Average Temperature',
+      unit: [Units.DegC],
+    },
+    HVBatteryVoltage: {
+      label: 'Battery Pack Voltage',
+      matchHeaderWords: 'Battery Pack Voltage',
+      unit: [Units.Volt],
+    },
+    HVBatteryCurrent: {
+      label: 'Battery Pack Current',
+      matchHeaderWords: 'Battery Pack Current',
+      unit: [Units.Ampere],
+    },
+    HVCellVoltageMin: {
+      label: 'Battery Maximum Cell Voltage',
+      matchHeaderWords: 'Maximum Cell Voltage',
+      unit: [Units.Volt],
+    },
+    HVCellVoltageMax: {
+      label: 'Battery Minimum Cell Voltage',
+      matchHeaderWords: 'Minimum Cell Voltage',
+      unit: [Units.Volt],
+    },
+    VehicleSpeed: {
+      label: 'Vehicle Speed',
+      matchHeaderWords: 'Vehicle Speed',
+      unit: [Units.MetersPerSecond, Units.KiloMetersPerHour],
+    },
+  };
 
   constructor() {
     console.log('DriveLogInterface created');
+
+    // assign default index to each header mapping
+    for (const key in this.headerMappings) {
+      this.headerMappings[key].headerIndex = undefined;
+      this.headerMappings[key].unitIndex = 0;
+    }
   }
 
   startBGThread() {

@@ -1,23 +1,23 @@
 import { ValueRange } from './ValueRange';
 
-export interface HeaderMapping {
+export interface DataEntry {
   [key: string]: number | undefined;
 }
 
-export interface HeaderRanges {
+export interface DataRanges {
   [key: string]: ValueRange;
 }
 
 export class VehicleRecords {
   headers: string[];
-  records: HeaderMapping[] = [];
-  ranges: HeaderRanges = {};
+  records: DataEntry[] = [];
+  ranges: DataRanges = {};
 
   constructor(headerNames: string[]) {
     this.headers = headerNames;
   }
 
-  updateStatistics(r: HeaderMapping) {
+  updateStatistics(r: DataEntry) {
     // go through each key and update the statistics
     for (const keyName in r) {
       const val = r[keyName];
@@ -31,7 +31,7 @@ export class VehicleRecords {
     }
   }
 
-  addRecord(r: HeaderMapping) {
+  addRecord(r: DataEntry) {
     this.records.push(Object.assign({}, r)); // create a copy of 'r'
     this.updateStatistics(r);
   }
